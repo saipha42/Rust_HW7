@@ -1,78 +1,88 @@
-use clap::{Arg, App};
+use std::env;
 
 fn main() {
 
-    let _matches = App::new("Sort")
-                                .about("Sort Program")
-                                .author("Sai Marn Pha")
-                                .version("0.1.0")
-                                .arg(
-                                    Arg::with_name("list")
-                                    .value_name("LIST")
-                                    .required(true)
-                                    .multiple(true)
-                                ).get_matches();
+    let args : Vec<_> = env::args().collect();
+
+    if args.len() < 2 {
+        panic!("Not enough arguments!");
+    }
     
-    let mut v  = _matches.values_of_lossy("list").unwrap();
+    let mut v: Vec<String> = args[1..].to_vec();
+
     if v.len()%2 != 0 {
          v = v[0..v.len()-1].to_vec();
     }
 
-    let mut res : Vec<(i32, i32)> = Vec::new();
-    for i in (0..v.len()-1).step_by(2) {
-        let x = v[i].parse::<i32>().unwrap();
-        let y = v[i+1].parse::<i32>().unwrap();
+    let mut list : Vec<(f32, f32)> = Vec::new();
+    for i in (0..v.len()).step_by(2) {
+        let x = v[i].parse::<f32>().unwrap();
+        let y = v[i+1].parse::<f32>().unwrap();
 
-        res.push( (x, y) );
-
+        list.push( (x, y) );
     }
 
-    //Ascending sort
-    for _ in 0..res.len() {
+    let list = BSort {list: list};
 
-        for k in 0..(res.len() - 1) {
+    let asc = list.asc();
+    let desc = list.desc();
 
-            let x = res[k].0;
-            let y = res[k+1].0;
-            if x > y {
-                res.swap(k, k+1);
+    println!("Ascending : {:?}", asc);
+    println!("Descending : {:?}", desc);
+    
+}
+
+
+
+
+struct BSort {
+    list : Vec<(f32, f32)>
+}
+
+impl BSort {
+    fn asc (&self) -> Vec<(f32, f32)> {
+
+        let mut list = self.list.clone();
+        self.sort(&mut list, 1)
+    }
+
+    fn desc (&self) -> Vec<(f32, f32)> {
+
+        let mut list = self.list.clone();
+        self.sort(&mut list, -1)
+    }
+
+    fn sort(&self, list : &mut Vec<(f32, f32)>, direction : i32) -> Vec<(f32, f32)> {
+
+        let status = direction > 0; // true for ascending and false for descending
+        for _ in 0..list.len() {
+
+            for k in 0..(list.len() - 1) {
+    
+                let ax = list[k].0;
+                let bx = list[k+1].0;
+                if (ax > bx) == status {
+                    list.swap(k, k+1);
+                }
             }
         }
-    }
+        
+        for _ in 0..list.len() {
     
-    for i in 0..res.len() {
-
-        let mut v = vec![res[i].0 , res[i].1];
-        if v[0] > v[1] {
-            v.swap(0, 1);
-        }
-        res[i] = (v[0], v[1]);
-    }
-
-    println!("Ascending Order {:?}", res);
-
-
-    //Descending sort
-    for _ in 0..res.len() {
-
-        for k in 0..(res.len() - 1) {
-
-            let x = res[k].0;
-            let y = res[k+1].0;
-            if y > x {
-                res.swap(k, k+1);
+            for k in 0..(list.len() - 1) {
+                
+                let ax = list[k].0;
+                let bx = list[k+1].0;
+                let ay = list[k].1;
+                let by = list[k+1].1;
+                if (ay > by) == status && ax == bx {
+                    list.swap(k, k+1);
+                }
             }
         }
-    }
-    
-    for i in 0..res.len() {
 
-        let mut v = vec![res[i].0 , res[i].1];
-        if v[0] < v[1] {
-            v.swap(0, 1);
-        }
-        res[i] = (v[0], v[1]);
+        list.to_owned()
+
+        
     }
-    println!("Descending Sort  {:?}", res);
-    
 }
