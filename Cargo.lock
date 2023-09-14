@@ -144,7 +144,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "hw8"
+name = "hw7"
 version = "0.1.0"
 dependencies = [
  "assert_cmd",
