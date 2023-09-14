@@ -42,9 +42,9 @@ fn main () {
     }</style>");
     table_content.push_str("<table>\
     <tr>\
-        <th>Celcius</th>\
-        <th>Celcius^2</th>\
-        <th>Celcius^3</th>\
+        <th>x</th>\
+        <th>x^2</th>\
+        <th>x^3</th>\
     </tr>\
     ");
 
